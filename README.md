@@ -1,6 +1,6 @@
 # Genesis OS (i686)
 
-**Um sistema operativo de 32 bits, leve, para PCs fracos — com instalador, shell e ligação a um agente de IA.**
+**Um sistema operativo de 32 bits, leve, para PCs fracos — com instalador, shell e uma tomada pronta para o agente de IA do professor.**
 
 Escrito do zero em C e Assembly para o Dell Latitude D600 (Pentium M, 512 MB de RAM),
 mas corre em qualquer PC x86 de 32 bits. Não usa bibliotecas do sistema, não usa
@@ -14,19 +14,29 @@ paging e cabe em menos de 100 KB de código.
 - IDT com 32 exceções e 16 IRQs; PIC remapeado; relatório de exceção em vez de reset silencioso.
 - Temporizador a 100 Hz e teclado PS/2 com Shift, Backspace e layouts US/PT/ES.
 - Gestão de memória: alocador de frames de 4 KiB por bitmap e heap do kernel.
-- Shell: `help`, `clear`, `info`, `mem`, `uptime`, `calc`, `hexdump`, `ai`, `splash`, `reboot`, `halt`.
+- Shell: `help`, `clear`, `info`, `mem`, `uptime`, `calc`, `hexdump`, `splash`, `reboot`, `halt`.
 - **Assistente de instalação**: idioma (PT/EN/ES), teclado (US/PT/ES), espaço em disco (1–20 GB),
   resumo e confirmação.
-- **Agente de IA por porta série**: o comando `ai <pergunta>` envia a pergunta a um PC
-  que corre o modelo (Ollama ou API compatível com OpenAI) e mostra a resposta.
+
+## Opção futura: agente de IA
+
+O agente é trabalho do professor e está **desligado por omissão**. O kernel já tem
+a tomada pronta: um protocolo de uma linha por COM1, com espera e resposta
+limitadas, e um programa do lado do PC (`host/agent_bridge.py`) que fala com
+Ollama ou com uma API compatível com OpenAI. Para o experimentar:
+
+```sh
+make clean && make AGENT=1
+```
+
+O modelo nunca corre no portátil — 512 MB não chegam. O portátil é o terminal; o
+modelo corre no PC ligado pelo cabo série.
 
 ## Estado honesto
 
 - A instalação **ainda não escreve no disco**: falta o driver ATA, a tabela de
   partições, um sistema de ficheiros e a instalação do GRUB. O assistente recolhe
   as escolhas e di-lo no ecrã em vez de fingir que instalou.
-- O modelo de IA **não corre no portátil** (512 MB não chegam). O portátil é o
-  terminal; o modelo corre no PC ligado pelo cabo série.
 - Ainda não há rede, sistema de ficheiros, multitarefa nem modo utilizador.
 
 ## Construir
@@ -37,6 +47,7 @@ Precisas de GCC com `-m32`, binutils e GNU Make:
 make check     # ferramentas e modo 32 bits
 make           # build/kernel.elf
 make emulate   # corre no Unicorn: sessão normal + assistente de instalação
+make AGENT=1   # inclui o comando opcional `ai` (trabalho futuro)
 make iso       # genesis.iso (precisa de grub-mkrescue e xorriso)
 make run       # QEMU com ecrã e série
 ```
@@ -53,7 +64,7 @@ O código, os testes, os documentos e a ferramenta do agente estão no arquivo
 unzip project-genesis-i686.zip    # cria a pasta genesis-os/
 cd genesis-os
 git init -b main
-git add -A && git commit -m "Genesis OS i686: kernel, shell, instalador e agente"
+git add -A && git commit -m "Genesis OS i686: kernel, shell, instalador e agente opcional"
 git remote add origin git@github.com:kevimmendes/genesis-os-i686.git
 git push -u origin main
 ```
