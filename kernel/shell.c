@@ -2,7 +2,7 @@
  * Project Genesis - interactive shell.
  *
  * A line editor (echo, backspace), a small command table and nothing else. All
- * output goes through the console layer, so whatever appears on the laptop'\''s
+ * output goes through the console layer, so whatever appears on the laptop's
  * screen also appears on a serial capture.
  */
 
@@ -87,7 +87,7 @@ static uint32_t parse_number(const char *text, const char **end, int *ok)
 
     *ok = 0;
 
-    if (cursor[0] == '\''0'\'' && (cursor[1] == '\''x'\'' || cursor[1] == '\''X'\'')) {
+    if (cursor[0] == '0' && (cursor[1] == 'x' || cursor[1] == 'X')) {
         base = 16;
         cursor += 2;
     }
@@ -96,12 +96,12 @@ static uint32_t parse_number(const char *text, const char **end, int *ok)
         char c = *cursor;
         uint32_t digit;
 
-        if (c >= '\''0'\'' && c <= '\''9'\'') {
-            digit = (uint32_t)(c - '\''0'\'');
-        } else if (base == 16 && c >= '\''a'\'' && c <= '\''f'\'') {
-            digit = (uint32_t)(c - '\''a'\'') + 10u;
-        } else if (base == 16 && c >= '\''A'\'' && c <= '\''F'\'') {
-            digit = (uint32_t)(c - '\''A'\'') + 10u;
+        if (c >= '0' && c <= '9') {
+            digit = (uint32_t)(c - '0');
+        } else if (base == 16 && c >= 'a' && c <= 'f') {
+            digit = (uint32_t)(c - 'a') + 10u;
+        } else if (base == 16 && c >= 'A' && c <= 'F') {
+            digit = (uint32_t)(c - 'A') + 10u;
         } else {
             break;
         }
@@ -151,45 +151,45 @@ static void print_calc(const char *args)
     int ok;
 
     left = parse_number(cursor, &cursor, &ok);
-    while (*cursor == '\'' '\'') {
+    while (*cursor == ' ') {
         cursor++;
     }
-    if (ok == 0 || *cursor == '\''\0'\'') {
+    if (ok == 0 || *cursor == '\0') {
         console_puts("usage: calc <number> <op> <number>  (op: + - * / %)\n");
         return;
     }
 
     op = *cursor++;
-    while (*cursor == '\'' '\'') {
+    while (*cursor == ' ') {
         cursor++;
     }
 
     right = parse_number(cursor, &cursor, &ok);
-    while (*cursor == '\'' '\'') {
+    while (*cursor == ' ') {
         cursor++;
     }
-    if (ok == 0 || *cursor != '\''\0'\'') {
+    if (ok == 0 || *cursor != '\0') {
         console_puts("usage: calc <number> <op> <number>  (op: + - * / %)\n");
         return;
     }
 
     switch (op) {
-    case '\''+'\'':
+    case '+':
         result = left + right;
         break;
-    case '\''-'\'':
+    case '-':
         result = left - right;
         break;
-    case '\''*'\'':
+    case '*':
         result = left * right;
         break;
-    case '\''/'\'':
-    case '\''%'\'':
+    case '/':
+    case '%':
         if (right == 0) {
             console_puts("calc: division by zero\n");
             return;
         }
-        result = (op == '\''/'\'') ? left / right : left % right;
+        result = (op == '/') ? left / right : left % right;
         break;
     default:
         console_puts("calc: unknown operator (use + - * / %)\n");
@@ -218,16 +218,16 @@ static void print_hexdump(const char *args)
     uint32_t length = HEXDUMP_DEFAULT_LENGTH;
     int ok = 1;
 
-    if (*cursor != '\''\0'\'') {
+    if (*cursor != '\0') {
         address = parse_number(cursor, &cursor, &ok);
-        while (*cursor == '\'' '\'') {
+        while (*cursor == ' ') {
             cursor++;
         }
         if (ok == 0) {
             console_puts("usage: hexdump [address] [length]  (max 256 bytes)\n");
             return;
         }
-        if (*cursor != '\''\0'\'') {
+        if (*cursor != '\0') {
             length = parse_number(cursor, &cursor, &ok);
             if (ok == 0) {
                 console_puts("usage: hexdump [address] [length]  (max 256 bytes)\n");
@@ -252,12 +252,12 @@ static void print_hexdump(const char *args)
         for (uint32_t column = 0; column < 16u; column++) {
             if (column < row) {
                 print_byte_hex(bytes[offset + column]);
-                console_putc('\'' '\'');
+                console_putc(' ');
             } else {
                 console_puts("   ");
             }
             if (column == 7u) {
-                console_putc('\'' '\'');
+                console_putc(' ');
             }
         }
 
@@ -265,7 +265,7 @@ static void print_hexdump(const char *args)
         for (uint32_t column = 0; column < row; column++) {
             uint8_t value = bytes[offset + column];
 
-            console_putc(value >= 32u && value < 127u ? (char)value : '\''.'\'');
+            console_putc(value >= 32u && value < 127u ? (char)value : '.');
         }
         console_puts("|\n");
     }
@@ -304,14 +304,14 @@ static int starts_with_word(const char *text, const char *word)
         return 0;
     }
 
-    return text[length] == '\''\0'\'' || text[length] == '\'' '\'';
+    return text[length] == '\0' || text[length] == ' ';
 }
 
 static const char *arguments_of(const char *text, const char *word)
 {
     const char *cursor = text + strlen(word);
 
-    while (*cursor == '\'' '\'') {
+    while (*cursor == ' ') {
         cursor++;
     }
 
@@ -320,11 +320,11 @@ static const char *arguments_of(const char *text, const char *word)
 
 static void execute_line(char *text)
 {
-    while (*text == '\'' '\'') {
+    while (*text == ' ') {
         text++;
     }
 
-    if (*text == '\''\0'\'') {
+    if (*text == '\0') {
         return;
     }
 
@@ -347,7 +347,7 @@ static void execute_line(char *text)
     } else if (starts_with_word(text, "ai")) {
         const char *prompt = arguments_of(text, "ai");
 
-        if (*prompt == '\''\0'\'') {
+        if (*prompt == '\0') {
             console_puts("usage: ai <question>\n");
         } else {
             agent_ask(prompt);
@@ -367,7 +367,7 @@ static void execute_line(char *text)
     } else {
         console_puts("unknown command: ");
         console_puts(text);
-        console_puts("\ntype '\''help'\'' for the list of commands.\n");
+        console_puts("\ntype 'help' for the list of commands.\n");
     }
 }
 
@@ -376,18 +376,18 @@ static void read_line(void)
 {
     uint32_t length = 0;
 
-    line[0] = '\''\0'\'';
+    line[0] = '\0';
 
     for (;;) {
         char c = keyboard_getchar();
 
-        if (c == '\''\n'\'') {
-            console_putc('\''\n'\'');
-            line[length] = '\''\0'\'';
+        if (c == '\n') {
+            console_putc('\n');
+            line[length] = '\0';
             return;
         }
 
-        if (c == '\''\b'\'') {
+        if (c == '\b') {
             if (length > 0) {
                 length--;
                 console_puts("\b \b");
@@ -412,7 +412,7 @@ void shell_run(const struct boot_info *info)
 {
     boot = info;
 
-    console_puts("\ntype '\''help'\'' and press Enter for the command list.\n");
+    console_puts("\ntype 'help' and press Enter for the command list.\n");
 
     for (;;) {
         console_puts("genesis> ");
