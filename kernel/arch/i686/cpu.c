@@ -29,7 +29,7 @@ static int cpu_has_cpuid(void)
                      :
                      : "cc");
 
-    /* Put the caller'\''s flags back. */
+    /* Put the caller's flags back. */
     __asm__ volatile("pushl %0\n\tpopfl" : : "r"(original) : "cc");
 
     return ((original ^ flipped) & 0x200000u) != 0;
@@ -64,7 +64,7 @@ const char *cpu_vendor(void)
             vendor[i * 4 + j] = (char)((words[i] >> (j * 8)) & 0xFF);
         }
     }
-    vendor[12] = '\''\0'\'';
+    vendor[12] = '\0';
 
     return vendor;
 }

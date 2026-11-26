@@ -87,8 +87,8 @@ void serial_putc(char c)
     }
 
     /* A bare newline only moves the cursor down on a terminal, so send CR too. */
-    if (c == '\''\n'\'') {
-        serial_putc('\''\r'\'');
+    if (c == '\n') {
+        serial_putc('\r');
     }
 
     for (uint32_t spin = 0; spin < UART_TX_SPIN_LIMIT; spin++) {
