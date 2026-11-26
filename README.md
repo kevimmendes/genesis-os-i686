@@ -105,7 +105,7 @@ cpu mode   : 32-bit protected mode, paging off
 console    : VGA text 80x25 (no serial UART detected)
 interrupts : PIC at vectors 32-47, PIT 100 Hz, PS/2 keyboard, 0 handled
 frames     : 32496 free of 32768 (131072 KiB managed, 4 KiB each)
-heap       : heap allocator ready
+heap       : heap allocator online
 result     : OK - kernel entry reached, interrupts running
 
 type 'help' and press Enter for the command list.
