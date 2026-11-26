@@ -1,0 +1,25 @@
+# Build output
+/build/
+/iso/
+
+# Chat attachments (source archives, not part of the kernel)
+/files/
+
+# Compiled objects and binaries
+*.o
+*.a
+*.so
+*.elf
+*.bin
+*.iso
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~
+
+# Python caches (tests/)
+__pycache__/
+*.pyc
