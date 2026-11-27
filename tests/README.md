@@ -25,9 +25,10 @@ pip install unicorn
 make emulate
 ```
 
-O `make emulate` corre o kernel duas vezes: uma sessão normal e o assistente de
-instalação (`python3 tests/emulate_boot.py build/kernel.elf setup`), que responde
-`1`, `2`, `10` e `s` — português, teclado PT, 10 GB, confirmar.
+O `make emulate` corre o kernel três vezes: uma sessão normal; o assistente de
+instalação pela entrada do GRUB (`... build/kernel.elf setup`); e o mesmo
+assistente aberto a partir da shell com o comando `setup` (`... install`).
+Ambos respondem `1`, `2`, `10` e `s` — português, teclado PT, 10 GB, confirmar.
 
 O harness vai além do arranque:
 
@@ -69,8 +70,9 @@ emula PIC nem PIT), comportamento em hardware real e temporização. Para isso,
 | 18 | O protocolo do agente envia a pergunta | só com `make AGENT=1` | opcional |
 | 19 | A resposta do agente é mostrada | só com `make AGENT=1` | opcional |
 | 20 | O agente funciona no portátil com cabo | trabalho futuro do professor | **não testado** |
-| 21 | O assistente mostra idioma/teclado/disco | `make emulate` modo setup | passa |
+| 21 | O assistente mostra idioma/teclado/disco | `make emulate` modos setup e install | passa |
 | 22 | O assistente valida e confirma | resumo + `nada foi escrito no disco` | passa |
+| 24 | O comando `setup` abre o assistente na shell | `make emulate` modo install | passa |
 | 23 | A instalação real no disco | driver ATA + FS + GRUB (M8) | **não existe ainda** |
 | 13 | O ISO arranca no hardware real | `make iso` + CD-R no D600 | **não testado** |
 | 14 | A saída série funciona num UART real | QEMU com `-serial stdio` | **não testado** |

@@ -30,6 +30,7 @@ meaning (function keys, arrows, key releases) are ignored.
 | `calc <a> <op> <b>` | integer arithmetic: `+`, `-`, `*`, `/`, `%` (unsigned 32-bit) |
 | `hexdump [addr] [n]` | hex and ASCII dump, default `0x100000` for 64 bytes, at most 256 |
 | `echo <text>` | prints the rest of the line |
+| `setup` | opens the installer wizard (language, keyboard, disk space), same as the ISO's **Install** entry |
 | `splash` | draws the boot art again for 1.5 s, then clears the screen |
 | `reboot` | pulses the 8042 reset line |
 | `halt` | disables interrupts and stops the CPU |
@@ -48,6 +49,11 @@ no command that pretends to do something the kernel cannot do.
 professor's agent, enabled with `make AGENT=1`. The laptop sends the question
 over the serial cable and `host/agent_bridge.py` runs the model on a PC; see
 [AGENT.md](AGENT.md).
+
+`setup` reopens the installation wizard on a running system, so the choices can
+be reviewed without rebooting into the GRUB entry. Like that entry, it collects
+language, keyboard layout and disk space and writes nothing to the disk; see
+[INSTALL.md](INSTALL.md).
 
 `calc` and `hexdump` are the small utilities: arithmetic without a floating
 point unit, and a memory viewer whose default address is the Multiboot header,

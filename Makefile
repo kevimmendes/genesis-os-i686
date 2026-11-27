@@ -122,6 +122,7 @@ iso: $(KERNEL)
 emulate: $(KERNEL)
 	@python3 tests/emulate_boot.py $(KERNEL)
 	@python3 tests/emulate_boot.py $(KERNEL) setup
+	@python3 tests/emulate_boot.py $(KERNEL) install
 
 # Rebuild the boot-splash C source from the 80x48 drawing in tools/.
 # Only needed after editing tools/splash-ascii.txt; the generated file is

@@ -1,6 +1,7 @@
 # Instalação
 
-O ISO do Genesis tem duas entradas no menu do GRUB:
+O ISO do Genesis tem duas entradas no menu do GRUB, que aparece no ecrã
+durante 15 segundos:
 
 - **Project Genesis - live session**: arranca directo para a shell, sem perguntas.
 - **Install Project Genesis**: passa `setup` na linha de comandos do kernel e
@@ -20,6 +21,10 @@ Quatro ecrãs, todos conduzidos pelo teclado, em português, inglês ou espanhol
 
 Se responder `n`, o assistente recomeça do primeiro ecrã. Se confirmar, as
 preferências ficam guardadas para a sessão e o sistema continua para a shell.
+
+A mesma janela de instalação abre-se a qualquer momento a partir da shell com o
+comando `setup` (ver [SHELL.md](SHELL.md)), por isso não é preciso reiniciar
+para escolher a entrada do menu outra vez.
 
 ## O que ainda não acontece (e porquê)
 
@@ -55,7 +60,8 @@ pip install unicorn
 make emulate
 ```
 
-O `make emulate` corre o kernel duas vezes: uma sessão normal (comandos e agente)
-e o assistente de instalação com as escolhas `1`, `2`, `10`, `s` — português,
-teclado PT, 10 GB, confirmar. As duas têm de terminar em
-`result: emulate test passed`.
+O `make emulate` corre o kernel três vezes: uma sessão normal (comandos e
+agente), o assistente de instalação aberto pela entrada do GRUB e o mesmo
+assistente aberto à mão com o comando `setup`. O assistente responde sempre
+`1`, `2`, `10`, `s` — português, teclado PT, 10 GB, confirmar. As três têm de
+terminar em `result: emulate test passed`.
