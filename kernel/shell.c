@@ -14,6 +14,7 @@
 #include <kernel/agent.h>
 #endif
 #include <kernel/report.h>
+#include <kernel/setup.h>
 #include <kernel/shell.h>
 #include <lib/console.h>
 #include <lib/string.h>
@@ -42,6 +43,7 @@ static void print_help(void)
     console_puts("  ai <question>  ask the host model over the serial link\n");
 #endif
     console_puts("  echo <text>    print the text back\n");
+    console_puts("  setup          open the installer wizard (language, keyboard, disk)\n");
     console_puts("  splash         draw the boot art again\n");
     console_puts("  reboot         restart the machine\n");
     console_puts("  halt           stop the CPU\n");
@@ -356,6 +358,10 @@ static void execute_line(char *text)
     } else if (starts_with_word(text, "echo")) {
         console_puts(arguments_of(text, "echo"));
         console_puts("\n");
+    } else if (strcmp(text, "setup") == 0) {
+        /* Same wizard as the ISO's "Install" entry, so installation can be
+         * opened from a live session too. */
+        setup_run();
     } else if (strcmp(text, "splash") == 0) {
         splash_show();
         splash_hold_ms(1500);
