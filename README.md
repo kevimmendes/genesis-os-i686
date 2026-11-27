@@ -46,7 +46,7 @@ A system this small does not need more.
 - `mem` and `info` commands that report exactly what the allocator believes.
 
 **Shell and small tools**
-- `help`, `clear`, `info`, `mem`, `uptime`, `echo`, `splash`, `reboot`, `halt`.
+- `help`, `clear`, `info`, `mem`, `uptime`, `echo`, `setup`, `splash`, `reboot`, `halt`.
 - `calc <a> <op> <b>` for integer arithmetic and `hexdump [addr] [n]` to inspect memory.
 - See [docs/SHELL.md](docs/SHELL.md).
 
@@ -59,9 +59,10 @@ A system this small does not need more.
   [host/README.md](host/README.md).
 
 **Setup wizard**
-- The ISO offers a live session and an **Install Project Genesis** entry that
-  asks for language, keyboard layout (US/PT/ES) and how much disk space to use,
-  then confirms the choices.
+- The ISO shows a GRUB menu for 15 seconds with a live session and an
+  **Install Project Genesis** entry that asks for language, keyboard layout
+  (US/PT/ES) and how much disk space to use, then confirms the choices.
+- The same wizard opens from the live shell with the `setup` command.
 - Nothing is written to the disk yet: that needs the ATA driver and a
   filesystem (M8). The wizard says so on screen instead of pretending. See
   [docs/INSTALL.md](docs/INSTALL.md).
@@ -86,8 +87,9 @@ make iso       # GRUB ISO for real hardware (needs grub-mkrescue, xorriso)
 
 No QEMU on your machine? `make emulate` runs the kernel in-process with Unicorn
 (`pip install unicorn`), types `help`, `mem`, `calc`, `hexdump` and `halt` at the
-prompt through a fake 8042, then runs the setup wizard, and checks the splash and
-the output of both on the VGA buffer.
+prompt through a fake 8042, then opens the setup wizard twice (from the ISO's
+install entry and from the `setup` command) and checks the splash and the output
+on the VGA buffer.
 
 On boot you first see the splash screen (the art, no text), and after about 2.5
 seconds the screen is cleared for the report and the shell:
