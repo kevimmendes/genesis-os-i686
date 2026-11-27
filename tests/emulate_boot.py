@@ -18,7 +18,7 @@ What it does not verify: firmware, GRUB, real IRQ delivery (Unicorn emulates
 neither the PIC nor the PIT), real hardware behaviour, or timing. Use
 `make test` for the QEMU boot and the real machine for the rest.
 
-Usage: python3 tests/emulate_boot.py [build/kernel.elf]
+Usage: python3 tests/emulate_boot.py [build/kernel.elf] [live|setup|install]
 Requires: pip install unicorn
 """
 
@@ -163,7 +163,7 @@ def read_vga_text(uc):
 def main():
     kernel = sys.argv[1] if len(sys.argv) > 1 else "build/kernel.elf"
     mode = sys.argv[2] if len(sys.argv) > 2 else "live"
-    setup_mode = mode == "setup"
+    setup_mode = mode in ("setup", "install")
     entry, segments = load_elf(kernel)
 
     uc = Uc(UC_ARCH_X86, UC_MODE_32)
@@ -174,13 +174,17 @@ def main():
         if memsz > len(data):
             uc.mem_write(address + len(data), b"\x00" * (memsz - len(data)))
 
-    build_multiboot_info(uc, "setup" if setup_mode else None)
+    build_multiboot_info(uc, "setup" if mode == "setup" else None)
 
     # The harness has no 8042 and no interrupt controller, so port 0x64 and port
     # 0x60 are served from a queue of scan codes. Reading the status port first
     # is what the driver does before taking a byte, so the two stay in step.
     keyboard = {
-        "queue": typed_scancodes(SETUP_LINES if setup_mode else LIVE_LINES),
+        "queue": typed_scancodes(
+            ("setup\n" + SETUP_LINES) if mode == "install"
+            else SETUP_LINES if setup_mode
+            else LIVE_LINES
+        ),
         "presented": False,
     }
 
@@ -341,7 +345,10 @@ def main():
             print(f"FAIL: missing '{needle}'")
             status = 1
 
-    print("mode             :", "setup wizard" if setup_mode else "live session")
+    print("mode             :",
+          "setup wizard (GRUB entry)" if mode == "setup"
+          else "setup wizard (shell command)" if mode == "install"
+          else "live session")
 
     art_rows = [line for line in (art or []) if line]
     art_ink = sum(len(line.replace(" ", "")) for line in art_rows)
